@@ -1,11 +1,11 @@
 CC=g++
-CFLAGS=-Wall
+CFLAGS=-Wall -D MG_ENABLE_MBEDTLS=0
 OPTIM=-O3
 
 #Project specifics and info
 PROJECT_NAME=mgrest
-EXEC_NAME=keygen_musrv
-ALL_OUT=out/mongoose.o out/frozen.o out/muapp.o
+EXEC_NAME=ping
+ALL_OUT=out/mongoose.o out/frozen.o out/muapp.o out/mubyte.o out/munet.o
 
 #Boost related dependencies
 INCLUDES_BOOST=-I C:/Dev/CLibs/boost_1_75_0
@@ -24,22 +24,17 @@ LIBGMOCK=-lgmock -L ${GMOCK_ROOT}/build
 LIBGMOCK_MAIN=-lgmock_main
 
 #List your tests' source files in the TESTS_SOURCES variable
-TESTS_SOURCES=
+TESTS_SOURCES=tests/json_unit.cpp
 #Choose the test suite to run {GTEST, GMOCK}
-TEST_SUITE=GTEST
+TEST_SUITE=GMOCK
 
 INCLUDES_SSL=
-LIBSSL=-lssl -lcrypto
+LIBSSL=#-lmbedtls -lmbedcrypto -lmbedx509 -L lib
 
 INCLUDES_LOG=
 LIBTHREAD=-lpthread
 
 #OS Specifics
-#Defaults for linux-based os
-RM=rm
-MAIN=${EXEC_NAME}
-ALLTESTS=alltests
-LIBSOCK=
 #Specify your actual os here -> this can be overriden at making (e.g 'make mgrest OS=LIN' to make for linux environment)
 OS=WIN
 ifeq (${OS}, WIN)
@@ -48,24 +43,28 @@ RM=del /f
 MAIN=${EXEC_NAME}.exe
 LIBSOCK=-lwsock32 -lWs2_32
 ALLTESTS=alltests.exe
-else ifeq (${OS}, LINUX)//Define Linux dll and special flags here
+else ifeq (${OS}, LINUX)#Define Linux dll and special flags here
 #Linux here
+RM=rm
+MAIN=${EXEC_NAME}
+ALLTESTS=alltests
+LIBSOCK=
 else
 endif
 INCLUDES=-I include ${INCLUDES_LOG}
 
 #Targets
-
 ${EXEC_NAME}: bin/${MAIN}
 bin/${MAIN}: src/${EXEC_NAME}.cpp ${ALL_OUT}
-	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o bin/${EXEC_NAME} src/${EXEC_NAME}.cpp ${ALL_OUT} ${LIBSOCK}
-out/muapp.o: src/muapp.cpp include/muapp.hpp
-	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o out/muapp.o -c src/muapp.cpp
-out/mongoose.o: src/mongoose.c include/mongoose.h
-	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o out/mongoose.o -c src/mongoose.c
-	
-out/frozen.o: src/frozen.c include/frozen.h
-	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o out/frozen.o -c src/frozen.c
+	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o bin/${EXEC_NAME} src/${EXEC_NAME}.cpp ${ALL_OUT} ${LIBSSL} ${LIBSOCK}
+
+out/%.o: src/%.cpp include/%.hpp
+	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ -c $<
+
+out/%.o: src/%.c include/%.h
+	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ -c $<
+
+
 
 #Project structure rules
 structure:
@@ -79,12 +78,12 @@ clean:
 	-${RM} bin/*.o
 
 #Test management
-alltests: tests/${ALLTESTS}
-tests/${ALLTESTS}: ${TESTS_SOURCES}
+alltests: bin/${ALLTESTS}
+bin/${ALLTESTS}: ${TESTS_SOURCES} ${ALL_OUT}
 ifeq (${TEST_SUITE}, GTEST)
-	${CC} ${CFLAGS} ${INCLUDES} ${INCLUDES_GTEST} ${LIBGTEST_MAIN} ${LIBGTEST} -o tests/alltests ${TESTS_SOURCES} ${ALL_OUT}
+	${CC} ${CFLAGS} ${INCLUDES} ${INCLUDES_GTEST} ${LIBGTEST_MAIN} ${LIBGTEST} -o bin/alltests ${TESTS_SOURCES} ${ALL_OUT} ${LIBSOCK} ${LIBSSL} ${LIBTHREAD}
 else ifeq (${TEST_SUITE}, GMOCK)
-	${CC} ${CFLAGS} ${INCLUDES} ${INCLUDES_GTEST} ${INCLUDES_GMOCK} ${LIBGMOCK_MAIN} ${LIBGTEST} ${LIBGMOCK} -o tests/alltests ${TESTS_SOURCES} ${ALL_OUT}
+	${CC} ${CFLAGS} ${INCLUDES} ${INCLUDES_GTEST} ${INCLUDES_GMOCK} ${LIBGMOCK_MAIN} ${LIBGTEST} ${LIBGMOCK} -o bin/alltests ${TESTS_SOURCES} ${ALL_OUT} ${LIBSOCK} ${LIBSSL} ${LIBTHREAD}
 endif
 #Gtest static libraries building
 install_gtest:
