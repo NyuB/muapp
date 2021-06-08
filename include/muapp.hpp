@@ -59,7 +59,7 @@ template<typename J>
 class JsonRequestCallback : RequestCallback {
 public:
     virtual void call(mg_http_message * req, ResponseSharedPtr res){
-        J parsed =J().fromJson(mgs2s(req->body));
+        J parsed = J().fromJson(mgs2s(req->body));
         if(parsed.isValid()){
             jcb(req, parsed, res);
         }
@@ -68,8 +68,8 @@ public:
         }
         
     }
-private:
-    void jcb (mg_http_message *, J const&, ResponseSharedPtr);
+protected:
+    void jcb (mg_http_message *, J const&, ResponseSharedPtr) = 0;
 };
 
 class FunctionPointerRequestCallback : public RequestCallback {

@@ -1,0 +1,28 @@
+{
+    "locations": [
+        {
+            "match": {
+                "host":"www.one.com",
+                "port":null,
+                "uri":null
+            },
+            "pass": {
+                "host":"www.one.com",
+                "port":1234,
+                "uri":null
+            }
+        },
+        {
+            "match":{
+                "host":null,
+                "port":80,
+                "uri":null
+            },
+            "pass": {
+                "host":"www.default.com",
+                "port":8888,
+                "uri":null
+            }
+        }
+    ]
+}

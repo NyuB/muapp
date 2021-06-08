@@ -4,7 +4,7 @@ OPTIM=-O3
 
 #Project specifics and info
 PROJECT_NAME=mgrest
-EXEC_NAME=ping
+EXEC_NAME=keygen
 ALL_OUT=out/mongoose.o out/frozen.o out/muapp.o out/mubyte.o out/munet.o
 
 #Boost related dependencies
