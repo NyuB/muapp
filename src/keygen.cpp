@@ -2,6 +2,7 @@
 #include "muapp.hpp"
 #include "mujson.hpp"
 #include "mubyte.hpp"
+#include "munet.hpp"
 #include <sstream>
 #define CPABE long //TODO replace with actual type
 

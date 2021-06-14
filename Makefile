@@ -24,7 +24,7 @@ LIBGMOCK=-lgmock -L ${GMOCK_ROOT}/build
 LIBGMOCK_MAIN=-lgmock_main
 
 #List your tests' source files in the TESTS_SOURCES variable
-TESTS_SOURCES=tests/json_unit.cpp
+TESTS_SOURCES=tests/json_unit.cpp tests/mg_unit.cpp
 #Choose the test suite to run {GTEST, GMOCK}
 TEST_SUITE=GMOCK
 
