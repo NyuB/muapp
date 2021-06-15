@@ -28,6 +28,7 @@ jobs:
   examples:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v1
     - name: make structure
       run: make structure OS=LIN
     - name: make ping
