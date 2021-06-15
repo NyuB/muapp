@@ -10,19 +10,19 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: make structure
-      run: make structure
+      run: make structure OS=LIN
     - name: make ping
-      run: make ping
+      run: make ping OS=LIN
     - name: make keygen
-      run: make keygen
+      run: make keygen OS=LIN
     - name: download gmock
       run: |
         curl https://github.com/google/googletest/archive/refs/tags/release-1.10.0.zip > /gmock/gmock.zip
         unzip /gmock.zip
     - name: install gmock
-      run: make install_gmock GMOCK_ROOT=/gmock/googletest-master/googlemock
-    - name:  make tests
+      run: make install_gmock GMOCK_ROOT=/gmock/googletest-master/googlemock OS=LIN
+    - name:  make tests OS=LIN
       run : |
-        make alltests
-        make check
+        make alltests OS=LIN
+        make check OS=LIN
       
