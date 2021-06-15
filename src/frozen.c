@@ -18,7 +18,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS /* Disable deprecation warning in VS2005+ */
 
-#include "frozen.h"
+#include "cesanta/frozen.h"
 
 #include <ctype.h>
 #include <stdarg.h>
