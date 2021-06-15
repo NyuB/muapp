@@ -1,6 +1,6 @@
 #ifndef MUJSON_HEADER
 #define MUJSON_HEADER
-#include "frozen.h"
+#include <cesanta/frozen.h>
 #include <string>
 #include <iostream>
 #include <sstream>

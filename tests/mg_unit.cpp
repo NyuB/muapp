@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
-#include "frozen.h"
-#include "mongoose.h"
+#include <cesanta/frozen.h>
+#include <cesanta/mongoose.h>
 #include <cstring>
 
 const char * request = "POST http://localhost:5555/api HTTP/1.1\r\nHost: localhost:5555\r\nContent-Type: application/json\r\nContent-Length: 2\r\n\r\n{}";

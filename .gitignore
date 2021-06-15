@@ -1,5 +1,6 @@
 out
 bin
+doc
 lib
 ssl
 include/mbedtls

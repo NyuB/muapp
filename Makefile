@@ -4,7 +4,6 @@ OPTIM=-O3
 
 #Project specifics and info
 PROJECT_NAME=mgrest
-EXEC_NAME=keygen
 ALL_OUT=out/mongoose.o out/frozen.o out/muapp.o out/mubyte.o out/munet.o
 
 #Boost related dependencies
@@ -28,6 +27,9 @@ TESTS_SOURCES=tests/json_unit.cpp tests/mg_unit.cpp
 #Choose the test suite to run {GTEST, GMOCK}
 TEST_SUITE=GMOCK
 
+#Doxygen executable
+DOXYGEN=C:\Dev\Doxygen\doxygen.exe
+
 INCLUDES_SSL=
 LIBSSL=#-lmbedtls -lmbedcrypto -lmbedx509 -L lib
 
@@ -40,31 +42,42 @@ OS=WIN
 ifeq (${OS}, WIN)
 #Windows here
 RM=del /f
-MAIN=${EXEC_NAME}.exe
 LIBSOCK=-lwsock32 -lWs2_32
-ALLTESTS=alltests.exe
+EXX=.exe
 else ifeq (${OS}, LINUX)#Define Linux dll and special flags here
 #Linux here
 RM=rm
 MAIN=${EXEC_NAME}
-ALLTESTS=alltests
 LIBSOCK=
 else
 endif
 INCLUDES=-I include ${INCLUDES_LOG}
+ALLTESTS=alltests${EXX}
+
+%${EXX}:
+	echo TEST
+	echo $@
 
 #Targets
-${EXEC_NAME}: bin/${MAIN}
-bin/${MAIN}: src/${EXEC_NAME}.cpp ${ALL_OUT}
-	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o bin/${EXEC_NAME} src/${EXEC_NAME}.cpp ${ALL_OUT} ${LIBSSL} ${LIBSOCK}
+.PHONY : keygen ping doc check distribution install_gmock install_gtest
+keygen: bin/keygen${EXX}
+ping: bin/ping${EXX}
+
+bin/%${EXX}: src/%.cpp ${ALL_OUT}
+	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ $< ${ALL_OUT} ${LIBSSL} ${LIBSOCK}
+bin/%${EXX}: examples/%.cpp ${ALL_OUT}
+	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ $< ${ALL_OUT} ${LIBSSL} ${LIBSOCK}
 
 out/%.o: src/%.cpp include/%.hpp
 	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ -c $<
 
 out/%.o: src/%.c include/%.h
 	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ -c $<
-
-
+check: alltests
+	cd bin && ${ALLTESTS}
+doc: Doxyfile ${ALL_OUT}
+	${DOXYGEN} Doxyfile 
+distribution: alltests doc
 
 #Project structure rules
 structure:
@@ -73,6 +86,7 @@ structure:
 	-mkdir src
 	-mkdir include
 	-mkdir tests
+	-mkdir doc
 clean:
 	-${RM} out/*.o
 	-${RM} bin/*.o

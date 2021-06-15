@@ -1,5 +1,5 @@
 #include "gmock/gmock.h"
-#include "frozen.h"
+#include <cesanta/frozen.h>
 
 
 TEST(GTestSetup, Json){
