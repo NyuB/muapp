@@ -73,11 +73,19 @@ out/%.o: src/%.cpp include/%.hpp
 
 out/%.o: src/%.c include/%.h
 	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ -c $<
+
+out/%.o: src/%.cpp include/cesanta/%.hpp
+	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ -c $<
+
+out/%.o: src/%.c include/cesanta/%.h
+	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ -c $<
+
 check: alltests
 	cd bin && ${ALLTESTS}
 doc: Doxyfile ${ALL_OUT}
 	${DOXYGEN} Doxyfile 
 distribution: alltests doc
+	ar -rs lib/libmgrest.a ${ALL_OUT}
 
 #Project structure rules
 structure:
