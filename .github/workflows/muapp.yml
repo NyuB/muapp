@@ -17,8 +17,9 @@ jobs:
       run: make keygen OS=LIN
     - name: download gmock
       run: |
+        mkdir -p /gmock/
         curl https://github.com/google/googletest/archive/refs/tags/release-1.10.0.zip > /gmock/gmock.zip
-        unzip /gmock.zip
+        unzip /gmock/gmock.zip
     - name: install gmock
       run: make install_gmock GMOCK_ROOT=/gmock/googletest-master/googlemock OS=LIN
     - name:  make tests OS=LIN
