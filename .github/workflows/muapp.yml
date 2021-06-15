@@ -11,10 +11,6 @@ jobs:
     - uses: actions/checkout@v1
     - name: make structure
       run: make structure OS=LIN
-    - name: make ping
-      run: make ping OS=LIN
-    - name: make keygen
-      run: make keygen OS=LIN
     - name: download gmock
       run: |
         mkdir -p ./gmock/
@@ -29,4 +25,13 @@ jobs:
       run : |
         make alltests TEST_SUITE=GMOCK GMOCK_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googlemock GTEST_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googletest OS=LIN
         make check OS=LIN
+  examples:
+    runs-on: ubuntu:latest
+    steps:
+    - name: make structure
+      run: make structure OS=LIN
+    - name: make ping
+      run: make ping OS=LIN
+    - name: make keygen
+      run: make keygen OS=LIN
       
