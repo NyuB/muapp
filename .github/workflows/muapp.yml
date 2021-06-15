@@ -1,0 +1,26 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: make ping
+      run: make ping
+    - name: make keygen
+      run: make keygen
+    - name: download gmock
+      run: |
+        curl https://github.com/google/googletest/archive/refs/tags/release-1.10.0.zip > /gmock/gmock.zip
+        unzip /gmock.zip
+    - name: install gmock
+      run: make install_gmock GMOCK_ROOT=/gmock/googletest-master/googlemock
+    - name:  make tests
+      run : |
+        make alltests
+        make check
+      
