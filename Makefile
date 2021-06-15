@@ -81,7 +81,7 @@ out/%.o: src/%.c include/cesanta/%.h
 	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ -c $<
 
 check: alltests
-	cd bin && ${ALLTESTS}
+	cd bin && ./${ALLTESTS}
 doc: Doxyfile ${ALL_OUT}
 	${DOXYGEN} Doxyfile 
 distribution: alltests doc
@@ -95,6 +95,7 @@ structure:
 	-mkdir include
 	-mkdir tests
 	-mkdir doc
+	-mkdir lib
 clean:
 	-${RM} out/*.o
 	-${RM} bin/*.o
