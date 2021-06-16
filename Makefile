@@ -12,14 +12,14 @@ LIBBOOST=
 
 #GTest related dependencies
 GTEST_ROOT=C:/Dev/CLibs/googletest-master/googletest
-INCLUDES_GTEST=-I ${GTEST_ROOT}/include
-LIBGTEST=-lgtest -L ${GTEST_ROOT}/build
+INCLUDES_GTEST=-I '"${GTEST_ROOT}/include"'
+LIBGTEST=-lgtest -L '"${GTEST_ROOT}/build"'
 LIBGTEST_MAIN=-lgtest_main
 
 #GMock related dependencies
 GMOCK_ROOT=C:/Dev/CLibs/googletest-master/googlemock
-INCLUDES_GMOCK=-I ${GMOCK_ROOT}/include
-LIBGMOCK=-lgmock -L ${GMOCK_ROOT}/build
+INCLUDES_GMOCK=-I '"${GMOCK_ROOT}"'/include
+LIBGMOCK=-lgmock -L '"${GMOCK_ROOT}"'/build
 LIBGMOCK_MAIN=-lgmock_main
 
 #List your tests' source files in the TESTS_SOURCES variable
@@ -110,14 +110,14 @@ else ifeq (${TEST_SUITE}, GMOCK)
 endif
 #Gtest static libraries building
 install_gtest:
-	-cd ${GTEST_ROOT} && mkdir build
-	cd ${GTEST_ROOT} && ${CC} -c src/gtest-all.cc src/gtest_main.cc -I include -I .
-	cd ${GTEST_ROOT} && ar rs build/libgtest.a gtest-all.o
-	cd ${GTEST_ROOT} && ar rs build/libgtest_main.a gtest_main.o
-	-cd ${GTEST_ROOT} && ${RM} *.o
+	-cd '"${GTEST_ROOT}"' && mkdir build
+	cd '"${GTEST_ROOT}"' && ${CC} -c src/gtest-all.cc src/gtest_main.cc -I include -I .
+	cd '"${GTEST_ROOT}"' && ar rs build/libgtest.a gtest-all.o
+	cd '"${GTEST_ROOT}"' && ar rs build/libgtest_main.a gtest_main.o
+	-cd '"${GTEST_ROOT}"' && ${RM} *.o
 install_gmock:
-	-cd ${GMOCK_ROOT} && mkdir build
-	cd ${GMOCK_ROOT} && ${CC} -c src/gmock-all.cc src/gmock_main.cc -I include -I . ${INCLUDES_GTEST}
-	cd ${GMOCK_ROOT} && ar rs build/libgmock.a gmock-all.o
-	cd ${GMOCK_ROOT} && ar rs build/libgmock_main.a gmock_main.o
-	-cd ${GMOCK_ROOT} && ${RM} *.o
+	-cd '"${GMOCK_ROOT}"' && mkdir build
+	cd '"${GMOCK_ROOT}"' && ${CC} -c src/gmock-all.cc src/gmock_main.cc -I include -I . ${INCLUDES_GTEST}
+	cd '"${GMOCK_ROOT}"' && ar rs build/libgmock.a gmock-all.o
+	cd '"${GMOCK_ROOT}"' && ar rs build/libgmock_main.a gmock_main.o
+	-cd '"${GMOCK_ROOT}"' && ${RM} *.o
