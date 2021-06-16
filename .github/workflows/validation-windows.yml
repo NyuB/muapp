@@ -29,7 +29,7 @@ jobs:
     - name:  make tests 
       run : |
         make alltests TEST_SUITE=GMOCK GMOCK_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googlemock GTEST_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googletest OS=WIN
-        make check OS=LIN
+        make check OS=WIN
   examples:
     runs-on: windows-latest
     steps:
