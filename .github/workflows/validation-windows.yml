@@ -24,11 +24,11 @@ jobs:
         ls
     - name: install gmock
       run: |
-        make install_gtest GTEST_ROOT="\"${{ github.workspace }}/gmock/googletest-release-1.10.0/googletest\"" OS=LIN
-        make install_gmock GMOCK_ROOT="\"${{ github.workspace }}/gmock/googletest-release-1.10.0/googlemock\"" GTEST_ROOT="\"${{ github.workspace }}/gmock/googletest-release-1.10.0/googletest\"" OS=LIN
+        make install_gtest GTEST_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googletest OS=LIN
+        make install_gmock GMOCK_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googlemock GTEST_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googletest OS=LIN
     - name:  make tests 
       run : |
-        make alltests TEST_SUITE=GMOCK GMOCK_ROOT="\"${{ github.workspace }}/gmock/googletest-release-1.10.0/googlemock\"" GTEST_ROOT="\"${{ github.workspace }}/gmock/googletest-release-1.10.0/googletest\"" OS=LIN
+        make alltests TEST_SUITE=GMOCK GMOCK_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googlemock GTEST_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googletest OS=LIN
         make check OS=LIN
   examples:
     runs-on: windows-latest
