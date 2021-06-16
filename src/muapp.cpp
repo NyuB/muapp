@@ -49,7 +49,7 @@ void Response::reply(){
         sb << it->first << ": " << it->second << "\r\n";
     }
     if(synchro != NULL){
-        std::lock_guard<std::mutex> guard(*synchro);
+        std::lock_guard<std::mutex> guard(*synchro);//TODO Resolve starvation problem
         mg_http_reply(c, statuscode, sb.str().c_str(), b.c_str());
         c->is_draining = true;
     }
@@ -238,7 +238,7 @@ void MuApp::synchronize(std::mutex * m){
 void MuApp::launch(void){
     if(synchro != NULL){
         for(;;){
-            std::lock_guard<std::mutex> guard(*synchro);
+            std::lock_guard<std::mutex> guard(*synchro);//TODO Resolve starvation problem
             mg_mgr_poll(&mgr, 1000);
         }
     } 

@@ -60,9 +60,10 @@ ALLTESTS=alltests${EXX}
 
 #Targets
 .PHONY : keygen ping doc check distribution install_gmock install_gtest
-examples: keygen ping
+examples: keygen ping abtgt
 keygen: bin/keygen${EXX}
 ping: bin/ping${EXX}
+abtgt: bin/abtgt${EXX}
 
 bin/%${EXX}: src/%.cpp ${ALL_OUT}
 	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ $< ${ALL_OUT} ${LIBSSL} ${LIBSOCK}
