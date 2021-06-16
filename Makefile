@@ -111,7 +111,7 @@ endif
 #Gtest static libraries building
 install_gtest:
 	-cd '${GTEST_ROOT}' && mkdir build
-	cd '${GTEST_ROOT} && ${CC} -c src/gtest-all.cc src/gtest_main.cc -I include -I .
+	cd '${GTEST_ROOT}' && ${CC} -c src/gtest-all.cc src/gtest_main.cc -I include -I .
 	cd '${GTEST_ROOT}' && ar rs build/libgtest.a gtest-all.o
 	cd '${GTEST_ROOT}' && ar rs build/libgtest_main.a gtest_main.o
 	-cd '${GTEST_ROOT}' && ${RM} *.o
