@@ -60,6 +60,7 @@ ALLTESTS=alltests${EXX}
 
 #Targets
 .PHONY : keygen ping doc check distribution install_gmock install_gtest
+examples: keygen ping
 keygen: bin/keygen${EXX}
 ping: bin/ping${EXX}
 

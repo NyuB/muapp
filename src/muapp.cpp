@@ -17,7 +17,9 @@ class Response
 */
 Response::Response(struct mg_connection * c_):c(c_){}
 Response::~Response(){
-    reply();
+    if(c!=NULL){
+        reply();
+    }
 }
 Response * Response::status(unsigned int status){
     statuscode = status;
@@ -35,15 +37,26 @@ void Response::send(unsigned int status, std::string const& data){
     statuscode = status;
     body << data;
 }
+void Response::synchronize(std::mutex * m){
+    synchro = m;
+}
 
 void Response::reply(){
+    
     std::stringstream sb;
     std::string b = body.str();
     for(auto it = headers.begin();it != headers.end();it++){
         sb << it->first << ": " << it->second << "\r\n";
     }
-    mg_http_reply(c, statuscode, sb.str().c_str(), b.c_str());
-    c->is_draining = true;
+    if(synchro != NULL){
+        std::lock_guard<std::mutex> guard(*synchro);
+        mg_http_reply(c, statuscode, sb.str().c_str(), b.c_str());
+        c->is_draining = true;
+    }
+    else{
+        mg_http_reply(c, statuscode, sb.str().c_str(), b.c_str());
+        c->is_draining = true;
+    }
 }
 /* 
 <<<<<<<<<<<<<<
@@ -211,7 +224,7 @@ MuApp::~MuApp(){
     mg_mgr_free(&mgr);
 }
 void MuApp::listen(API * api, unsigned int port){
-    mg_connection * c = mg_http_listen(&mgr, listenUrl(port).c_str(), API::receive, api);
+    mg_http_listen(&mgr, listenUrl(port).c_str(), API::receive, api);
 }
 void MuApp::listen(mg_event_handler_t fn, void * fn_data, unsigned int port){
     mg_http_listen(&mgr, listenUrl(port).c_str(), fn, fn_data);
@@ -219,8 +232,21 @@ void MuApp::listen(mg_event_handler_t fn, void * fn_data, unsigned int port){
 void MuApp::listenRaw(mg_event_handler_t fn, void * fn_data, unsigned int port){
     mg_listen(&mgr, listenUrl(port).c_str(), fn, fn_data);
 }
+void MuApp::synchronize(std::mutex * m){
+    synchro = m;
+}
 void MuApp::launch(void){
-    for(;;) mg_mgr_poll(&mgr, 1000);
+    if(synchro != NULL){
+        for(;;){
+            std::lock_guard<std::mutex> guard(*synchro);
+            mg_mgr_poll(&mgr, 1000);
+        }
+    } 
+    else{
+        for(;;){
+            mg_mgr_poll(&mgr, 1000);
+        }
+    }
 }
 std::string MuApp::listenUrl(unsigned int port){
     return "0.0.0.0:"+std::to_string(port);

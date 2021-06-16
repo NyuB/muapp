@@ -2,11 +2,14 @@
 #ifndef MUAPP_HEADER
 #define MUAPP_HEADER
 
+#include <mutex>
+#include <thread>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <map>
 #include <vector>
+#include <list>
 #include <memory>
 #include <cstring>
 #include <cesanta/mongoose.h>
@@ -70,8 +73,10 @@ public:
      * @param data Bytes to append to response body
      */
     void send(unsigned int status, std::string const& data);
+    void synchronize(std::mutex * m);
 protected:
 private:
+    std::mutex * synchro = NULL;
     void reply();
     struct mg_connection * c;
     unsigned int statuscode = 200;
@@ -305,8 +310,10 @@ public:
      */
     void listenRaw(mg_event_handler_t fn, void * fn_data, unsigned int port);
     void launch(void);
+    void synchronize(std::mutex * m);
 private:
     std::string listenUrl(unsigned int port);
+    std::mutex * synchro = NULL;
     struct mg_mgr mgr;
 };
 /**
