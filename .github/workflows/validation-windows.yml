@@ -37,7 +37,11 @@ jobs:
     - name: make structure
       run: make structure OS=WIN
     - name: make ping
-      run: make ping OS=WIN
+      run: |
+        make ping OS=WIN
+        bin/ping 5555 &
+        sleep 2
+        node tests/ping_test.js 5555 localhost
     - name: make keygen
       run: make keygen OS=WIN
       
