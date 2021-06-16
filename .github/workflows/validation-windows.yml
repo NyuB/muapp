@@ -7,7 +7,7 @@ on:
     - 'README.md'
     - '.gitignore'
     - '.vscode/**'
-    - .github/workflow/*-linux.yml
+    - .github/workflows/*-linux.yml
 
 jobs:
   build:
