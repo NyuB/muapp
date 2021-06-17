@@ -29,12 +29,12 @@ jobs:
       run : |
         sudo apt-get install doxygen -y
         make distribution OS=LIN DOXYGEN=doxygen
-        zip -r muapp-${{ github.ref }}-linux.zip include/ doc/ lib/libmuapp.a
+        zip -r muapp-linux.zip include/ doc/ lib/libmuapp.a
     - name: upload archive artifact
       uses: actions/upload-artifact@v2
       with:
         name: dist-archive-linux
-        path: muapp-${{ github.ref }}-linux.zip
+        path: muapp-linux.zip
   windows:
     runs-on: windows-latest
     steps:
@@ -54,20 +54,17 @@ jobs:
     - name:  run tests 
       run : |
         make check TEST_SUITE=GMOCK GMOCK_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googlemock GTEST_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googletest OS=WIN
-    - name: doxygen  
-      uses: mattnotmitt/doxygen-action@v1
-      with:
-        enable-latex: true
     - name: archive
       run: |
-        ar -rs out/*.o
-        zip -r muapp-${{ github.ref }}-windows.zip include/ doc/ lib/libmuapp.a
+        ar -rs lib/libmuapp.a out/*.o
+        zip -r muapp-windows.zip include/ lib/libmuapp.a
     - name: upload archive artifact
       uses: actions/upload-artifact@v2
       with:
         name: dist-archive-windows
-        path: muapp-${{ github.ref }}-windows.zip
+        path: muapp-windows.zip
   release:
+    needs: [linux, windows]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -92,13 +89,13 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./muapp-${{ github.ref }}-linux.zip
-        asset_name: muapp-${{ github.ref }}-linux.zip
+        asset_path: ./muapp-linux.zip
+        asset_name: muapp-linux.zip
         asset_content_type: application/zip
     - name: upload windows artifact
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./muapp-${{ github.ref }}-windows.zip
-        asset_name: muapp-${{ github.ref }}-windows.zip
+        asset_path: ./muapp-windows.zip
+        asset_name: muapp-windows.zip
         asset_content_type: application/zip
