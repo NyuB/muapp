@@ -28,7 +28,7 @@ TESTS_SOURCES=tests/json_unit.cpp tests/mg_unit.cpp
 TEST_SUITE=GMOCK
 
 #Doxygen executable
-DOXYGEN=C:\Dev\Doxygen\doxygen.exe
+
 
 INCLUDES_SSL=
 LIBSSL=#-lmbedtls -lmbedcrypto -lmbedx509 -L lib
@@ -41,11 +41,13 @@ LIBTHREAD=-lpthread
 OS=WIN
 ifeq (${OS}, WIN)
 #Windows here
+DOXYGEN=C:\Dev\Doxygen\doxygen.exe
 RM=del /f
 LIBSOCK=-lwsock32 -lWs2_32
 EXX=.exe
 else ifeq (${OS}, LINUX)#Define Linux dll and special flags here
 #Linux here
+DOXYGEN=doxygen
 RM=rm
 MAIN=${EXEC_NAME}
 LIBSOCK=

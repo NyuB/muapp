@@ -1,5 +1,4 @@
 name: Tests & Examples (LINUX)
-
 on:
   push:
     branches: [ master ]

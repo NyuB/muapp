@@ -4,8 +4,8 @@ on:
   push:
     branches: [ master ]
     tags:
-      - '**-release'
-      - '**-distribution'
+      - '*-release'
+      - '*-distribution'
 jobs:
   linux:
     runs-on: ubuntu-latest
@@ -28,7 +28,7 @@ jobs:
         make check TEST_SUITE=GMOCK GMOCK_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googlemock GTEST_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googletest OS=LIN
     - name: archive
       run : |
-        make distribution OS=LIN
+        make distribution OS=LIN DOXYGEN=doxygen
         zip -r muapp-${{ github.ref }}-linux.zip include/ doc/ lib/libmuapp.a
     - name: upload archive artifact
       uses: actions/upload-artifact@v2
@@ -56,7 +56,7 @@ jobs:
         make check TEST_SUITE=GMOCK GMOCK_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googlemock GTEST_ROOT=${{ github.workspace }}/gmock/googletest-release-1.10.0/googletest OS=WIN
     - name: archive
       run: |
-        make distribution OS=WIN
+        make distribution OS=WIN DOXYGEN=doxygen
         zip -r muapp-${{ github.ref }}-windows.zip include/ doc/ lib/libmuapp.a
     - name: upload archive artifact
       uses: actions/upload-artifact@v2
