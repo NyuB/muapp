@@ -47,7 +47,7 @@ LIBSOCK=-lwsock32 -lWs2_32
 EXX=.exe
 else ifeq (${OS}, LINUX)#Define Linux dll and special flags here
 #Linux here
-DOXYGEN=doxygen
+DOXYGEN=C:\Dev\Doxygen\doxygen.exe
 RM=rm
 MAIN=${EXEC_NAME}
 LIBSOCK=
