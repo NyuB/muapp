@@ -83,11 +83,11 @@ out/%.o: src/%.c include/cesanta/%.h
 	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ -c $<
 
 check: alltests
-	cd bin && ./${ALLTESTS}
+	./bin/${ALLTESTS}
 doc: Doxyfile ${ALL_OUT}
 	${DOXYGEN} Doxyfile 
-distribution: alltests doc
-	ar -rs lib/libmgrest.a ${ALL_OUT}
+distribution: doc
+	ar -rs lib/libmuapp.a ${ALL_OUT}
 
 #Project structure rules
 structure:

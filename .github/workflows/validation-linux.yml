@@ -8,6 +8,7 @@ on:
     - '.gitignore'
     - '.vscode/**'
     - .github/workflows/*-windows.yml
+    - .github/workflows/release.yml
 
 jobs:
   build:
