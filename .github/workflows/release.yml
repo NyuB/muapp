@@ -2,7 +2,6 @@ name: Lib Release (LIN/WIN)
 
 on:
   push:
-    branches: [ master ]
     tags:
       - '*-release'
       - '*-distribution'
