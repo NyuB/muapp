@@ -71,8 +71,8 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: dist-lib-windows
-    - name: ls
-      run: ls
+    - name: zip windows lib with doc and include
+      run: zip -r muapp-windows.zip include/ doc/ libmuapp.a
     - name: download linux
       uses: actions/download-artifact@v2
       with:
@@ -97,4 +97,13 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./muapp-linux.zip
         asset_name: muapp-linux.zip
+        asset_content_type: application/zip
+    - name: upload windows artifact
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./muapp-windows.zip
+        asset_name: muapp-windows.zip
         asset_content_type: application/zip
