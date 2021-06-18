@@ -15,6 +15,10 @@
 #include <cesanta/mongoose.h>
 #include "mujson.hpp"
 #include "mubyte.hpp"
+#define MUAPP_RSC_READ(Resource, Name, Fun) class Name : public muapp::RequestCallback {public:Name(std::shared_ptr<const Resource> r):resource(r){};~Name(){};virtual void call(mg_http_message * req, muapp::ResponseSharedPtr res){Fun};private:std::shared_ptr<const Resource> resource;} 
+#define MUAPP_RSC_READ_J(Resource, Name, JType, Fun) class Name : public muapp::JsonRequestCallback<JType> {public:Name(std::shared_ptr<const Resource> r):resource(r){};~Name(){};virtual void jcb(mg_http_message * req, JType const& obj, muapp::ResponseSharedPtr res){Fun};private:std::shared_ptr<const Resource> resource;}
+#define MUAPP_RSC_MUT(Resource, Name, Fun) class Name : public muapp::RequestCallback {public:Name(std::shared_ptr<Resource> r):resource(r){};~Name(){};virtual void call(mg_http_message * req, muapp::ResponseSharedPtr res){Fun};private:std::shared_ptr<Resource> resource;} 
+#define MUAPP_RSC_MUT_J(Resource, Name, JType, Fun) class Name : public muapp::JsonRequestCallback<JType> {public:Name(std::shared_ptr<Resource> r):resource(r){};~Name(){};virtual void jcb(mg_http_message * req, JType const& obj, muapp::ResponseSharedPtr res){Fun};private:std::shared_ptr<Resource> resource;}
 namespace muapp {
 
 typedef enum {
@@ -77,7 +81,6 @@ public:
 protected:
 private:
     std::mutex * synchro = NULL;
-    void reply();
     struct mg_connection * c;
     unsigned int statuscode = 200;
     std::map<std::string, std::string> headers;
@@ -119,16 +122,11 @@ using RequestCallbackSharedPtr = std::shared_ptr<RequestCallback>;
  * @tparam J A type accepting a J::fromJson(std::string) static method;
  */
 template<class J> 
-class JsonRequestCallback : RequestCallback {
+class JsonRequestCallback : public RequestCallback {
 public:
-    virtual void call(mg_http_message * req, ResponseSharedPtr res){
+    void call(mg_http_message * req, ResponseSharedPtr res){
         J parsed = J::fromJson(mgs2s(req->body));
-        if(parsed.isValid()){
-            jcb(req, parsed, res);
-        }
-        else{
-            res->send(400, "Invalid JSon Body");
-        }   
+        jcb(req, parsed, res); 
     }
     /**
      * @brief HTTP Request handler with preparsed JSon object
@@ -137,7 +135,7 @@ public:
      * @param obj The parsed obj
      * @param res @ref muapp::RequestCallback
      */
-    void jcb (mg_http_message * r, J const& obj, ResponseSharedPtr res) = 0;
+    virtual void jcb (mg_http_message * r, J const& obj, ResponseSharedPtr res) = 0;
 };
 
 /**

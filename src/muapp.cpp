@@ -18,7 +18,20 @@ class Response
 Response::Response(struct mg_connection * c_):c(c_){}
 Response::~Response(){
     if(c!=NULL){
-        reply();
+        std::stringstream sb;
+        std::string b = body.str();
+        for(auto it = headers.begin();it != headers.end();it++){
+            sb << it->first << ": " << it->second << "\r\n";
+        }
+        if(synchro != NULL){
+            std::lock_guard<std::mutex> guard(*synchro);//TODO Resolve starvation problem
+            mg_http_reply(c, statuscode, sb.str().c_str(), b.c_str());
+            c->is_draining = true;
+        }
+        else{
+            mg_http_reply(c, statuscode, sb.str().c_str(), b.c_str());
+            c->is_draining = true;
+        }
     }
 }
 Response * Response::status(unsigned int status){
@@ -41,23 +54,6 @@ void Response::synchronize(std::mutex * m){
     synchro = m;
 }
 
-void Response::reply(){
-    
-    std::stringstream sb;
-    std::string b = body.str();
-    for(auto it = headers.begin();it != headers.end();it++){
-        sb << it->first << ": " << it->second << "\r\n";
-    }
-    if(synchro != NULL){
-        std::lock_guard<std::mutex> guard(*synchro);//TODO Resolve starvation problem
-        mg_http_reply(c, statuscode, sb.str().c_str(), b.c_str());
-        c->is_draining = true;
-    }
-    else{
-        mg_http_reply(c, statuscode, sb.str().c_str(), b.c_str());
-        c->is_draining = true;
-    }
-}
 /* 
 <<<<<<<<<<<<<<
 class Response

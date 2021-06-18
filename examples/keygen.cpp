@@ -2,7 +2,6 @@
 #include "muapp.hpp"
 #include "mujson.hpp"
 #include "mubyte.hpp"
-#include "munet.hpp"
 #include <sstream>
 #define CPABE long //TODO replace with actual type of your favorite scheme ...
 
@@ -65,6 +64,7 @@ int main(int argc, char ** argv){
     muapp::API * api = (new muapp::API())->useJson();
     CPABE cpabe;
     muapp::RequestCallbackSharedPtr keygen(new KeyGenRCB(&cpabe));
+    api->post("/key/", keygen);
     api->post("/key", keygen);
     app.listen(api, 5555);
     app.launch();

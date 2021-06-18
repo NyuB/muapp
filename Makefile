@@ -4,7 +4,7 @@ OPTIM=-O3
 
 #Project specifics and info
 PROJECT_NAME=mgrest
-ALL_OUT=out/mongoose.o out/frozen.o out/muapp.o out/mubyte.o out/munet.o
+ALL_OUT=out/mongoose.o out/frozen.o out/muapp.o out/mubyte.o
 
 #Boost related dependencies
 INCLUDES_BOOST=-I C:/Dev/CLibs/boost_1_75_0
@@ -62,10 +62,11 @@ ALLTESTS=alltests${EXX}
 
 #Targets
 .PHONY : keygen ping doc check distribution install_gmock install_gtest
-examples: keygen ping abtgt
+examples: keygen ping abtgt alphabet
 keygen: bin/keygen${EXX}
 ping: bin/ping${EXX}
 abtgt: bin/abtgt${EXX}
+alphabet: bin/alphabet${EXX}
 
 bin/%${EXX}: src/%.cpp ${ALL_OUT}
 	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ $< ${ALL_OUT} ${LIBSSL} ${LIBSOCK}
