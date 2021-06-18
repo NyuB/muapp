@@ -9,7 +9,7 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: make structure
       run: make structure OS=LIN
     - name: download gmock
@@ -38,7 +38,7 @@ jobs:
   windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: make structure
       run: make structure OS=WIN
     - name: download gmock
@@ -57,21 +57,22 @@ jobs:
     - name: archive
       run: |
         ar -rs lib/libmuapp.a out/*.o
-        zip -r muapp-windows.zip include/ lib/libmuapp.a
-    - name: upload archive artifact
+    - name: upload libwin artifact
       uses: actions/upload-artifact@v2
       with:
-        name: dist-archive-windows
-        path: muapp-windows.zip
+        name: dist-lib-windows
+        path: lib/libmuapp.a
   release:
     needs: [linux, windows]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: download windows
       uses: actions/download-artifact@v2
       with:
-        name: dist-archive-windows
+        name: dist-lib-windows
+    - name: ls
+      run: ls
     - name: download linux
       uses: actions/download-artifact@v2
       with:
@@ -91,11 +92,4 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./muapp-linux.zip
         asset_name: muapp-linux.zip
-        asset_content_type: application/zip
-    - name: upload windows artifact
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./muapp-windows.zip
-        asset_name: muapp-windows.zip
         asset_content_type: application/zip
