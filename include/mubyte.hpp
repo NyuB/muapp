@@ -13,9 +13,22 @@ typedef unsigned char byte;
  */
 std::vector<byte> cpy(const byte * src, size_t len);
 
+/**
+ * @brief Construct a std::string copy from mongoose string
+ * 
+ * @param mgs 
+ * @return std::string 
+ */
 inline std::string mgs2s(struct mg_str mgs){
     return std::string(mgs.ptr, mgs.len);
 }
+
+/**
+ * @brief Construct a std::string copy from mongoose string
+ * 
+ * @param mgs 
+ * @return std::string 
+ */
 inline std::string mgs2s(struct mg_str * mgs){
     return std::string(mgs->ptr, mgs->len);
 }
