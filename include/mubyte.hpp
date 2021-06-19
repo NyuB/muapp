@@ -1,3 +1,13 @@
+/**
+ * @file mubyte.hpp
+ * @author NyuB
+ * @brief Helpers function to read-write raw bytes, read mongoose strings, etc ...
+ * @version 0.1
+ * @date 2021-06-19
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #ifndef MUBYTE_HEADER
 #define MUBYTE_HEADER
 #include <vector>

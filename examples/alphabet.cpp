@@ -82,13 +82,17 @@ public:
      * @param s original json string
      * @return LetterName the parsed json object
      */
-    static LetterName fromJson(std::string s){
+    static LetterName fromJson(std::string s, bool * v){
         char * name = NULL;
         LetterName res;
         json_scanf(s.c_str(), s.length(), "{letter:%c, name:%Q}", &res.letter, &name);
         if(name!=NULL){
             res.name = std::string(name);
             free(name);
+            *v = true;
+        }
+        else {
+            *v = false;
         }
         return res;
     }

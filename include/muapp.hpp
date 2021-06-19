@@ -1,4 +1,14 @@
-//https://cesanta.com/docs/
+/**
+ * @file muapp.hpp
+ * @author NyuB
+ * @brief Minimal "Express-ish" api to build a web server relying on mongoose
+ * @version 0.1
+ * @date 2021-06-19
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ * @see https://cesanta.com/docs/
+ */
 #ifndef MUAPP_HEADER
 #define MUAPP_HEADER
 
@@ -34,6 +44,8 @@ method readMethod(mg_http_message * req);
  * @brief Http response handler, designed to be passed among callbacks and send correctly formatted response upon destruction
  * 
  * @note Content-Length/Encoding headers will be correctly set upon response sending
+ * 
+ * @note Methods returning Response * are designed to be chained, methods returning void are designed to be final
  */
 class Response {
 public:
@@ -71,13 +83,51 @@ public:
      */
     Response * write(std::string const& data);
     /**
+     * @brief Acquires the given mutex before accessing i/o context to reply
+     * 
+     * @param m A mutex guarding the i/o context
+     * @return Response* The called Response object
+     */
+    Response * synchronize(std::mutex * m);
+
+    /**
      * @brief Shorthand for ->status(code)->write(data)
      * 
      * @param status HTTP return code
      * @param data Bytes to append to response body
      */
     void send(unsigned int status, std::string const& data);
-    void synchronize(std::mutex * m);
+
+    /**
+     * @brief ->status(400)
+     * 
+     */
+    void badRequest();
+
+    /**
+     * @brief ->status(200)
+     * 
+     */
+    void ok();
+
+    /**
+     * @brief ->send(200, data)
+     * 
+     * @param data body data to append
+     */
+    void ok(std::string data);
+
+    /**
+     * @brief ->status(404)
+     * 
+     */
+    void notFound();
+
+    /**
+     * @brief ->status(500)
+     * 
+     */
+    void error();
 protected:
 private:
     std::mutex * synchro = NULL;
@@ -125,8 +175,12 @@ template<class J>
 class JsonRequestCallback : public RequestCallback {
 public:
     void call(mg_http_message * req, ResponseSharedPtr res){
-        J parsed = J::fromJson(mgs2s(req->body));
-        jcb(req, parsed, res); 
+        bool r;
+        J parsed = J::fromJson(mgs2s(req->body), &r);
+        if(r)jcb(req, parsed, res);
+        else{
+            res->send(400,"");
+        } 
     }
     /**
      * @brief HTTP Request handler with preparsed JSon object
@@ -136,6 +190,41 @@ public:
      * @param res @ref muapp::RequestCallback
      */
     virtual void jcb (mg_http_message * r, J const& obj, ResponseSharedPtr res) = 0;
+};
+
+/**
+ * @brief Specialization to map with a JSonAdapter instead of a direct static class method
+ * 
+ * @tparam J 
+ */
+template<class J>
+class JsonRequestCallback<mujson::JsonAdapter<J>> : public RequestCallback {
+public:
+    JsonRequestCallback(mujson::JsonAdapter<J> adapter_):adapter(adapter_){};
+    /**
+     * @brief muapp::RequestCallback implementation, preparse http body as json
+     * 
+     * @param req 
+     * @param res 
+     */
+    void call(mg_http_message * req, ResponseSharedPtr res){
+        bool r;
+        J parsed = adapter.fromJson(mgs2s(req->body), &r);
+        if(r)jcb(req, parsed, res);
+        else{
+            res->send(400,"");
+        } 
+    }
+    /**
+     * @brief HTTP Request handler with preparsed JSon object
+     * 
+     * @param r The origin request from where obj was parsed
+     * @param obj The parsed obj
+     * @param res @ref muapp::RequestCallback
+     */
+    virtual void jcb (mg_http_message * r, J const& obj, ResponseSharedPtr res) = 0;
+protected:
+    mujson::JsonAdapter<J> adapter;
 };
 
 /**

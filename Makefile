@@ -79,10 +79,10 @@ out/%.o: src/%.cpp include/%.hpp
 out/%.o: src/%.c include/%.h
 	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ -c $<
 
-out/%.o: src/%.cpp include/cesanta/%.hpp
+out/%.o: src/cesanta/%.cpp include/cesanta/%.hpp
 	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ -c $<
 
-out/%.o: src/%.c include/cesanta/%.h
+out/%.o: src/cesanta/%.c include/cesanta/%.h
 	${CC} ${CFLAGS} ${OPTIM} ${INCLUDES} -o $@ -c $<
 
 check: alltests

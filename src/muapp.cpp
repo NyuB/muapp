@@ -50,8 +50,26 @@ void Response::send(unsigned int status, std::string const& data){
     statuscode = status;
     body << data;
 }
-void Response::synchronize(std::mutex * m){
+void Response::badRequest(){
+    send(400,"");
+}   
+void Response::ok(){
+    send(200,"");
+}
+void Response::ok(std::string data){
+    send(200,data);
+}
+void Response::notFound(){
+    send(404,"");
+}
+void Response::error(){
+    send(500,"");
+}
+
+
+Response * Response::synchronize(std::mutex * m){
     synchro = m;
+    return this;
 }
 
 /* 
